@@ -1,9 +1,9 @@
-# Pickle Model Security Lab
+# ML Model Supply-Chain Security Lab
 
 A hands-on lab demonstrating why loading a machine-learning model can execute
 arbitrary code — and why the file format matters more than any scanner.
 
-> **Educational security lab.** This repository intentionally builds a model
+> ⚠️ **Educational security lab.** This repository intentionally builds a model
 > file that runs a command when loaded. The "payload" is deliberately harmless —
 > it only writes a marker file (`PWNED.txt`) via `echo`. Nothing here touches the
 > network, credentials, or any file outside the lab folder. It exists to teach
@@ -30,7 +30,7 @@ roughly equivalent to running an untrusted executable.
 The danger is **not** what the model *is* (numbers) — it's what the file *tells
 the loader to do* while rebuilding it.
 
-## Lab — Prove that pickle executes code
+## Lab 1 — Prove that pickle executes code
 
 ### Setup
 
@@ -61,11 +61,11 @@ python load.py
 `load.py` plays the **victim**: it does nothing but `pickle.load()` the file —
 the same thing `torch.load()` does under the hood. Expected output:
 
-
+```
 PWNED.txt exists before? False
 PWNED.txt exists after? True
-loaded keys: ['layers.0.attention.query.weight', 'layers.0.attention.key.weight', 'metadata']
-
+loaded keys: ['layers.0.attention.query.weight', 'layers.0.attention.key.weight', '__metadata__']
+```
 
 The marker file appeared, and the model loaded **completely and correctly**. No
 error, no warning. That silence is the point.
@@ -95,6 +95,13 @@ The fix has to come earlier:
 |---|---|
 | `create_sample.py` | Attacker — builds the poisoned `.bin` |
 | `load.py` | Victim — loads it, triggering the payload |
+
+## Roadmap
+
+- [x] **Lab 1** — Prove pickle executes code on load
+- [ ] **Lab 2** — Read the opcodes *without* executing (static detection)
+- [ ] **Lab 3** — Inspect a `safetensors` file and see why it's immune
+- [ ] **Lab 4** — A tiered triage scanner for downloaded model repos
 
 ## Disclaimer
 

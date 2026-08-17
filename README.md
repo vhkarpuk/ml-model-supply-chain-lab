@@ -15,7 +15,8 @@ A machine-learning model is just a large pile of numbers (tensors). But the most
 common way to save PyTorch models — Python's **pickle** format — doesn't store
 data, it stores *instructions to rebuild the object*. Those instructions can
 include "import `os` and run this command." So loading an untrusted `.bin` is
-roughly equivalent to running an untrusted executable.
+roughly equivalent to running an untrusted executable — and the labs walk from
+proving that, to detecting it, to removing the problem at the format level.
 
 ## Background
 
@@ -26,6 +27,7 @@ roughly equivalent to running an untrusted executable.
 | **Serialization** | Flattening an in-memory object into bytes on disk. |
 | **Pickle** | Python's native serialization. Stores *rebuild instructions*, not just data — so it can call any function on load. |
 | **`__reduce__`** | The official hook where an object tells pickle how to rebuild itself. Abused to say "rebuild me by calling `os.system`." |
+| **Safetensors** | A newer format that stores only tensors — no rebuild instructions, so no code to run on load. |
 
 ## Labs
 
@@ -33,7 +35,7 @@ roughly equivalent to running an untrusted executable.
 |---|---|---|
 | 1 | [Pickle executes code](lab1-pickle-executes-code/) | Loading a model runs an embedded command — silently. |
 | 2 | [Detect without executing](lab2-detect-without-executing/) | Read the opcodes and find the payload *without* running it. |
-| 3 | Safetensors (planned) | A format that stores only tensors, immune by design. |
+| 3 | [Safetensors is immune by design](lab3-safetensors-is-immune/) | A format that stores only tensors — nothing to execute, nothing to scan. |
 | 4 | Triage scanner (planned) | A tiered scanner for downloaded model repos. |
 
 ## Setup
